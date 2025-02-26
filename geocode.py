@@ -47,7 +47,7 @@ def get_spn(toponym_to_find, mode=None):
     toponym = get_toponym(toponym_to_find)
     lower_corner = list(map(lambda x: float(x), toponym['boundedBy']['Envelope']['lowerCorner'].split()))
     upper_corner = list(map(lambda x: float(x), toponym['boundedBy']['Envelope']['upperCorner'].split()))
-    spn = list(map(lambda x, y: str(round(x - y, 4)), upper_corner, lower_corner))
+    spn = list(map(lambda x, y: round(x - y, 4), upper_corner, lower_corner))
     if mode == 'str':
         return f'{spn[0]},{spn[1]}'
     return spn
