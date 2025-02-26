@@ -10,9 +10,11 @@ class MapMiniProgram:
         self.screen = pygame.display.set_mode(size)
 
         # variable
+        # self.values_motion =
         self.running = True
         self.toponym_to_find = 'Тольятти, ленинский проспект 20'
-        self.scale = 18
+        self.ll = list(get_ll(self.toponym_to_find))
+        self.scale_z = 18
         self.image_map = self.create_map(self.toponym_to_find)
 
         # exe
@@ -31,15 +33,23 @@ class MapMiniProgram:
         if event.type == pygame.QUIT:
             self.running = False
         if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_PAGEUP and self.scale < 20:
-                self.scale += 1
-            elif event.key == pygame.K_PAGEDOWN and self.scale > 1:
-                self.scale -= 1
+            if event.key == pygame.K_PAGEUP and self.scale_z < 21:
+                self.scale_z += 1
+            elif event.key == pygame.K_PAGEDOWN and self.scale_z > 1:
+                self.scale_z -= 1
             self.image_map = self.create_map(self.toponym_to_find)
-
+            if event.key == pygame.K_UP:
+                self.ll[1] += 0.001 * (21 - self.scale_z)
+            elif event.key == pygame.K_DOWN:
+                self.ll[1] -= 0.001 * (21 - self.scale_z)
+            elif event.key == pygame.K_LEFT:
+                self.ll[0] -= 0.001 * (21 - self.scale_z)
+            elif event.key == pygame.K_RIGHT:
+                self.ll[0] += 0.001 * (21 - self.scale_z)
+            print(self.scale_z)
     def create_map(self, toponym):
-        params_static = {'ll': get_ll(toponym, 'str'),
-                         'z': self.scale,
+        params_static = {'ll': f'{self.ll[0]},{self.ll[1]}',
+                         'z': self.scale_z,
                          'size': '600,450'}
         resp = get_map(params_static)
         im = BytesIO(resp.content)
