@@ -10,11 +10,10 @@ class MapMiniProgram:
         self.screen = pygame.display.set_mode(size)
 
         # variable
-        # self.values_motion =
         self.running = True
         self.toponym_to_find = 'Тольятти, ленинский проспект 20'
         self.ll = list(get_ll(self.toponym_to_find))
-        self.scale_z = 18
+        self.spn = 0.002
         self.image_map = self.create_map(self.toponym_to_find)
 
         # exe
@@ -33,23 +32,36 @@ class MapMiniProgram:
         if event.type == pygame.QUIT:
             self.running = False
         if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_PAGEUP and self.scale_z < 21:
-                self.scale_z += 1
-            elif event.key == pygame.K_PAGEDOWN and self.scale_z > 1:
-                self.scale_z -= 1
-            self.image_map = self.create_map(self.toponym_to_find)
+            if event.key == pygame.K_PAGEUP and self.spn > 0.00025:
+                self.spn /= 2
+            elif event.key == pygame.K_PAGEDOWN and self.spn < 60:
+                self.spn *= 2
             if event.key == pygame.K_UP:
-                self.ll[1] += 0.001 * (21 - self.scale_z)
+                self.ll[1] += self.spn / 2
             elif event.key == pygame.K_DOWN:
-                self.ll[1] -= 0.001 * (21 - self.scale_z)
+                self.ll[1] -= self.spn / 2
             elif event.key == pygame.K_LEFT:
-                self.ll[0] -= 0.001 * (21 - self.scale_z)
+                self.ll[0] -= self.spn / 2
             elif event.key == pygame.K_RIGHT:
-                self.ll[0] += 0.001 * (21 - self.scale_z)
-            print(self.scale_z)
+                self.ll[0] += self.spn / 2
+            if self.ll[0] > 180:
+                self.ll[0] = -180 + (self.ll[0] - 180) + 1
+            elif self.ll[0] < -180:
+                self.ll[0] = 180 - abs(self.ll[0] + 180) - 1
+            if self.ll[1] > 85:
+                self.ll[1] = 85
+                # self.ll[1] = -90 + (self.ll[1] - 90) + 1
+            elif self.ll[1] < -75:
+                self.ll[1] = -75
+                # self.ll[1] = 90 - abs(self.ll[1] + 90) - 1
+                # устроитьь подсчет до макс точки каждого мастаба широт а 75 первый предел
+            print(self.spn, self.ll, self.spn)
+            self.image_map = self.create_map(self.toponym_to_find)
+
     def create_map(self, toponym):
         params_static = {'ll': f'{self.ll[0]},{self.ll[1]}',
-                         'z': self.scale_z,
+                         # 'z': self.scale_z,
+                         'spn': f'{self.spn},{self.spn}',
                          'size': '600,450'}
         resp = get_map(params_static)
         im = BytesIO(resp.content)

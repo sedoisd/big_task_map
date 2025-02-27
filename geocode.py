@@ -6,7 +6,7 @@ static_api_server = 'https://static-maps.yandex.ru/v1'
 search_api_server = "https://search-maps.yandex.ru/v1/"
 
 geocoder_api_key = 'bbf3064a-4087-43a3-bec3-622e7cb6a919'  # '8013b162-6b42-4997-9691-77b7074026e0'
-static_api_key = '23b263bf-d98d-43ee-b024-39ccb486f492'  # 'f3a0fe3a-b07e-4840-a1da-06f18b2ddf13'
+static_api_key = 'f3a0fe3a-b07e-4840-a1da-06f18b2ddf13' #   '23b263bf-d98d-43ee-b024-39ccb486f492'
 geosearch_api_key = 'dda3ddba-c9ea-4ead-9010-f43fbc15c6e3'
 
 
