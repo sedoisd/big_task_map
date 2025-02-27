@@ -1,13 +1,10 @@
 import requests
 import sys
+from apikeys import GEOCODER_API_KEY, GEOSEARCH_API_KEY, STATIC_API_KEY
 
 geocoder_api_server = "http://geocode-maps.yandex.ru/1.x/"
 static_api_server = 'https://static-maps.yandex.ru/v1'
 search_api_server = "https://search-maps.yandex.ru/v1/"
-
-geocoder_api_key = 'bbf3064a-4087-43a3-bec3-622e7cb6a919'  # '8013b162-6b42-4997-9691-77b7074026e0'
-static_api_key = 'f3a0fe3a-b07e-4840-a1da-06f18b2ddf13' #   '23b263bf-d98d-43ee-b024-39ccb486f492'
-geosearch_api_key = 'dda3ddba-c9ea-4ead-9010-f43fbc15c6e3'
 
 
 # log
@@ -23,7 +20,7 @@ def request_error(response, url, exit=None):
 # geocoder
 def get_toponym(toponym_to_find):
     request_params = {
-        "apikey": geocoder_api_key,
+        "apikey": GEOCODER_API_KEY,
         "geocode": toponym_to_find,
         "format": "json"}
     response = requests.get(geocoder_api_server, request_params)
@@ -55,7 +52,7 @@ def get_spn(toponym_to_find, mode=None):
 
 # static
 def get_map(params):
-    params['apikey'] = static_api_key
+    params['apikey'] = STATIC_API_KEY
     response = requests.get(static_api_server, params=params)
     if not response:
         request_error(response, static_api_server, get_map)
@@ -64,8 +61,8 @@ def get_map(params):
 
 # geosearch
 def get_org(params):
-    params['apikey'] = geosearch_api_key
+    params['apikey'] = GEOSEARCH_API_KEY
     response = requests.get(search_api_server, params=params)
     if not response:
-        request_error(response, geosearch_api_key, get_org)
+        request_error(response, GEOSEARCH_API_KEY, get_org)
     return response
