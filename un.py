@@ -50,11 +50,8 @@ class MapMiniProgram:
                 self.ll[0] = 180 - abs(self.ll[0] + 180) - 1
             if self.ll[1] > 85:
                 self.ll[1] = 85
-                # self.ll[1] = -90 + (self.ll[1] - 90) + 1
             elif self.ll[1] < -75:
                 self.ll[1] = -75
-                # self.ll[1] = 90 - abs(self.ll[1] + 90) - 1
-                # устроитьь подсчет до макс точки каждого мастаба широт а 75 первый предел
             print(self.spn, self.ll, self.spn)
             self.image_map = self.create_map(self.toponym_to_find)
 
