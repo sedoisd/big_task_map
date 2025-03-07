@@ -1,5 +1,8 @@
 import pygame
-# from PIL import Image
+import pygame_gui
+from pygame_gui.elements import UIButton
+
+from PIL import Image
 from geocode import get_map, get_ll
 from io import BytesIO
 
@@ -8,29 +11,45 @@ class MapMiniProgram:
     def __init__(self, size):
         pygame.init()
         self.screen = pygame.display.set_mode(size)
+        self.manager = pygame_gui.UIManager(size)
 
         # variable
         self.running = True
         self.toponym_to_find = 'Тольятти, ленинский проспект 20'
         self.ll = list(get_ll(self.toponym_to_find))
         self.spn = 0.002
-        self.image_map = self.create_map(self.toponym_to_find)
+        self.image_map = self.create_map()
+        timedelta = 0
+
+        # classes
+        self.clock = pygame.time.Clock()
 
         # exe
         self.run()
+        self.create_pygame_gui()
 
     def run(self):
         while self.running:
+            self.time_delta = self.clock.tick(60) / 1000
+            self.manager.update(self.time_delta)
+
+            # events
             for event in pygame.event.get():
                 self.event_handling(event)
+
+            # render
             self.screen.fill((0, 0, 0))
-            self.screen.blit(self.image_map, (0, 0))
+            self.screen.blit(self.image_map, (10, 10))
+            self.manager.draw_ui(self.screen)
             pygame.display.flip()
         pygame.quit()
 
     def event_handling(self, event):
+        self.manager.process_events(event)
         if event.type == pygame.QUIT:
             self.running = False
+        if event.type == pygame.MOUSEBUTTONUP:
+            print(event.pos)
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_PAGEUP and self.spn > 0.00025:
                 self.spn /= 2
@@ -53,9 +72,9 @@ class MapMiniProgram:
             elif self.ll[1] < -75:
                 self.ll[1] = -75
             print(self.spn, self.ll, self.spn)
-            self.image_map = self.create_map(self.toponym_to_find)
+            self.image_map = self.create_map()
 
-    def create_map(self, toponym):
+    def create_map(self):
         params_static = {'ll': f'{self.ll[0]},{self.ll[1]}',
                          # 'z': self.scale_z,
                          'spn': f'{self.spn},{self.spn}',
@@ -68,7 +87,14 @@ class MapMiniProgram:
         surface = pygame.image.load(im)
         return surface
 
+    def create_pygame_gui(self):
+        optional_list_themes = ['Светлая', 'Темная']
+        self.button = UIButton(relative_rect=pygame.Rect((650, 50, 50, 50)), text='АААААААаааАААААааааааАаАаАаааААаа')
+        # self.drop_themes = pygame_gui.elements.UIDropDownMenu(relative_rect=pygame.Rect((640, 60, 50, 30)),
+        #                                                       options_list=optional_list_themes, manager=self.manager,
+        #                                                       starting_option=optional_list_themes[0])
+
 
 if __name__ == '__main__':
-    screen_size = 600, 450
+    screen_size = 820, 470
     program = MapMiniProgram(screen_size)
