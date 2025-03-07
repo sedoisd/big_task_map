@@ -8,7 +8,7 @@ from io import BytesIO
 from PIL import Image
 
 from PyQt6 import uic
-from PyQt6.QtWidgets import QApplication, QMainWindow, QRadioButton
+from PyQt6.QtWidgets import QApplication, QMainWindow
 
 
 class MapMiniProgram(QMainWindow):

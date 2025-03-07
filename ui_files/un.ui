@@ -39,6 +39,9 @@
       <height>450</height>
      </rect>
     </property>
+    <property name="focusPolicy">
+     <enum>Qt::WheelFocus</enum>
+    </property>
     <property name="styleSheet">
      <string notr="true">
 </string>
@@ -81,16 +84,6 @@
       <item>
        <layout class="QHBoxLayout" name="horizontalLayout">
         <item>
-         <widget class="QRadioButton" name="radio_dark_theme">
-          <property name="focusPolicy">
-           <enum>Qt::NoFocus</enum>
-          </property>
-          <property name="text">
-           <string>Темная</string>
-          </property>
-         </widget>
-        </item>
-        <item>
          <widget class="QRadioButton" name="radio_light_theme">
           <property name="focusPolicy">
            <enum>Qt::NoFocus</enum>
@@ -100,9 +93,48 @@
           </property>
          </widget>
         </item>
+        <item>
+         <widget class="QRadioButton" name="radio_dark_theme">
+          <property name="focusPolicy">
+           <enum>Qt::NoFocus</enum>
+          </property>
+          <property name="text">
+           <string>Темная</string>
+          </property>
+         </widget>
+        </item>
        </layout>
       </item>
      </layout>
+    </widget>
+    <widget class="QLineEdit" name="line_search">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>70</y>
+       <width>181</width>
+       <height>20</height>
+      </rect>
+     </property>
+     <property name="focusPolicy">
+      <enum>Qt::ClickFocus</enum>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">background: white</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="button_search">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>100</y>
+       <width>75</width>
+       <height>23</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Искать</string>
+     </property>
     </widget>
    </widget>
   </widget>
