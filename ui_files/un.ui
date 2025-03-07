@@ -6,19 +6,19 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>820</width>
+    <width>830</width>
     <height>470</height>
    </rect>
   </property>
   <property name="minimumSize">
    <size>
-    <width>820</width>
+    <width>830</width>
     <height>470</height>
    </size>
   </property>
   <property name="maximumSize">
    <size>
-    <width>820</width>
+    <width>830</width>
     <height>470</height>
    </size>
   </property>
@@ -26,7 +26,7 @@
    <string>MainWindow</string>
   </property>
   <property name="styleSheet">
-   <string notr="true">background:#b8b8b8
+   <string notr="true">background:#526085
 </string>
   </property>
   <widget class="QWidget" name="centralwidget">
@@ -39,9 +39,71 @@
       <height>450</height>
      </rect>
     </property>
+    <property name="styleSheet">
+     <string notr="true">
+</string>
+    </property>
     <property name="text">
      <string/>
     </property>
+   </widget>
+   <widget class="QFrame" name="frame">
+    <property name="geometry">
+     <rect>
+      <x>620</x>
+      <y>10</y>
+      <width>201</width>
+      <height>451</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background: #9dacd4</string>
+    </property>
+    <property name="frameShape">
+     <enum>QFrame::StyledPanel</enum>
+    </property>
+    <property name="frameShadow">
+     <enum>QFrame::Raised</enum>
+    </property>
+    <widget class="QWidget" name="horizontalLayoutWidget">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>20</y>
+       <width>171</width>
+       <height>21</height>
+      </rect>
+     </property>
+     <layout class="QHBoxLayout" name="horizontalLayout">
+      <item>
+       <widget class="QRadioButton" name="radio_dark_theme">
+        <property name="text">
+         <string>Темная</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QRadioButton" name="radio_light_theme">
+        <property name="text">
+         <string>Светлая</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+    <widget class="QLabel" name="map_theme">
+     <property name="geometry">
+      <rect>
+       <x>20</x>
+       <y>0</y>
+       <width>171</width>
+       <height>16</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Тема карты:</string>
+     </property>
+    </widget>
    </widget>
   </widget>
  </widget>

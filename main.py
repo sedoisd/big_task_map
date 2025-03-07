@@ -1,14 +1,14 @@
 import sys
 
 from PyQt6.QtCore import Qt
-from PyQt6.QtGui import QPixmap, QImage
+from PyQt6.QtGui import QPixmap
 
 from geocode import get_map, get_ll
 from io import BytesIO
 from PIL import Image
 
 from PyQt6 import uic
-from PyQt6.QtWidgets import QApplication, QMainWindow
+from PyQt6.QtWidgets import QApplication, QMainWindow, QRadioButton
 
 
 class MapMiniProgram(QMainWindow):
@@ -20,8 +20,21 @@ class MapMiniProgram(QMainWindow):
         self.toponym_to_find = 'Тольятти, ленинский проспект 20'
         self.ll = list(get_ll(self.toponym_to_find))
         self.spn = 0.002
+        self.theme = 'light'
 
         # exe
+        self._update_map()
+        self.radio_light_theme.setChecked(True)
+
+        # bind
+        self.radio_light_theme.toggled.connect(self.switch_theme)
+        # self.radio_dark_theme.toggled.connect(self.switch_theme)
+
+    def switch_theme(self):
+        if self.radio_light_theme.isChecked():
+            self.theme = 'light'
+        elif self.radio_dark_theme.isChecked():
+            self.theme = 'dark'
         self._update_map()
 
     def keyPressEvent(self, event):
@@ -46,10 +59,11 @@ class MapMiniProgram(QMainWindow):
         elif self.ll[1] < -75:
             self.ll[1] = -75
         self._update_map()
+
     def _update_map(self):
         params_static = {'ll': f'{self.ll[0]},{self.ll[1]}',
-                         # 'z': self.scale_z,
                          'spn': f'{self.spn},{self.spn}',
+                         'theme': self.theme,
                          'size': '600,450'}
         resp = get_map(params_static)
         im = BytesIO(resp.content)
@@ -60,10 +74,14 @@ class MapMiniProgram(QMainWindow):
         image = QPixmap('map.png')
         self.image_label.setPixmap(image)
         # opened_image.show()
-        # px_image = QImage().loadFromData(im., 'PNG') # test
+
+
+# def except_hook(a, b, c):
+#     sys.__excepthook__(a, b, c)
 
 
 if __name__ == '__main__':
+    # sys.__excepthook__ = except_hook
     app = QApplication(sys.argv)
     ex = MapMiniProgram()
     ex.show()
