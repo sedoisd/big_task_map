@@ -37,8 +37,15 @@ class MapMiniProgram(QMainWindow):
             self.ll[0] -= self.spn / 2
         elif event.key() == Qt.Key.Key_Right:
             self.ll[0] += self.spn / 2
+        if self.ll[0] > 180:
+            self.ll[0] = -180 + (self.ll[0] - 180) + 1
+        elif self.ll[0] < -180:
+            self.ll[0] = 180 - abs(self.ll[0] + 180) - 1
+        if self.ll[1] > 85:
+            self.ll[1] = 85
+        elif self.ll[1] < -75:
+            self.ll[1] = -75
         self._update_map()
-
     def _update_map(self):
         params_static = {'ll': f'{self.ll[0]},{self.ll[1]}',
                          # 'z': self.scale_z,
