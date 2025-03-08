@@ -24,6 +24,8 @@ class MapMiniProgram(QMainWindow):
         self.theme = 'light'
         self.pt = ''
         self.flag_display_postal_code = True
+        self.flag_search = False
+        self.is_get_postal_code = False
 
         # exe
         self._update_map()
@@ -54,10 +56,11 @@ class MapMiniProgram(QMainWindow):
             self._update_map()
             self.search_address = get_address(self.toponym_to_find)
             address = f'Адрес обьекта: {self.search_address}'
-            is_get_postal_code = self.try_get_postal_code()
-            if self.flag_display_postal_code and is_get_postal_code:
+            self.is_get_postal_code = self.try_get_postal_code()
+            if self.flag_display_postal_code and self.is_get_postal_code:
                 address += f', {self.search_postal_code}'
             self.label_address.setText(address)
+            self.flag_search = True
         except Exception:
             # print(traceback.print_exc())
             self.line_search.setText('')
@@ -77,9 +80,16 @@ class MapMiniProgram(QMainWindow):
         self.line_search.setPlaceholderText('Введите адрес для поиска')
         self.label_address.setText('Адрес обьекта: -')
         self._update_map()
+        self.flag_search = False
+        self.is_get_postal_code = False
 
     def switch_postal_code(self):
         self.flag_display_postal_code = not self.flag_display_postal_code
+        if self.flag_search:
+            address = f'Адрес обьекта: {self.search_address}'
+            if self.is_get_postal_code and self.flag_display_postal_code:
+                address += f', {self.search_postal_code}'
+            self.label_address.setText(address)
 
     def keyPressEvent(self, event):
         if event.key() == Qt.Key.Key_PageDown:

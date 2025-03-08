@@ -198,7 +198,7 @@
            <enum>Qt::NoFocus</enum>
           </property>
           <property name="text">
-           <string>Включено</string>
+           <string>Включен</string>
           </property>
           <property name="checked">
            <bool>true</bool>
@@ -211,7 +211,7 @@
            <enum>Qt::NoFocus</enum>
           </property>
           <property name="text">
-           <string>Выключено</string>
+           <string>Выключен</string>
           </property>
          </widget>
         </item>
