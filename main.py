@@ -91,6 +91,18 @@ class MapMiniProgram(QMainWindow):
                 address += f', {self.search_postal_code}'
             self.label_address.setText(address)
 
+    def search_by_left_click_mouse(self, x, y):
+        pass
+
+    def mousePressEvent(self, event):
+        x, y = event.pos().x(), event.pos().y()
+        print(f"Координаты:{x}, {y}")
+        if event.button() == Qt.MouseButton.LeftButton:
+            # print("Левая")
+            self.search_by_left_click_mouse(x, y)
+        elif event.button() == Qt.MouseButton.RightButton:
+            print("Правая")
+
     def keyPressEvent(self, event):
         if event.key() == Qt.Key.Key_PageDown:
             self.spn *= 2
