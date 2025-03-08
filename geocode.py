@@ -55,6 +55,12 @@ def get_spn(toponym_to_find, mode=None):
     return spn
 
 
+def get_address(toponym_to_find):
+    toponym = get_toponym(toponym_to_find)
+    address = toponym['metaDataProperty']['GeocoderMetaData']['text']
+    return address
+
+
 # static
 def get_map(params):
     params['apikey'] = STATIC_API_KEY

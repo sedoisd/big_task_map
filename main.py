@@ -3,7 +3,7 @@ import sys
 from PyQt6.QtCore import Qt
 from PyQt6.QtGui import QPixmap
 
-from geocode import get_map, get_ll, get_spn
+from geocode import get_map, get_ll, get_spn, get_address
 from io import BytesIO
 from PIL import Image
 
@@ -49,14 +49,17 @@ class MapMiniProgram(QMainWindow):
             self.pt = f'{self.ll[0]},{self.ll[1]},pm2rdm'
             self.spn = get_spn(self.toponym_to_find)
             self._update_map()
+            self.label_address.setText(f'Адрес обьекта: {get_address(self.toponym_to_find)}')
         except Exception:
             self.line_search.setText('')
             self.line_search.setPlaceholderText('Ничего не удалось найти')
+            self.label_address.setText('Адрес обьекта: -')
 
     def search_reset(self):
         self.pt = ''
         self.line_search.setText('')
         self.line_search.setPlaceholderText('Введите адрес для поиска')
+        self.label_address.setText('Адрес обьекта: -')
         self._update_map()
 
 
@@ -104,12 +107,12 @@ class MapMiniProgram(QMainWindow):
         # opened_image.show()
 
 
-# def except_hook(a, b, c):
-#     sys.__excepthook__(a, b, c)
+def except_hook(a, b, c):
+    sys.__excepthook__(a, b, c)
 
 
 if __name__ == '__main__':
-    # sys.__excepthook__ = except_hook
+    sys.__excepthook__ = except_hook
     app = QApplication(sys.argv)
     ex = MapMiniProgram()
     ex.show()
