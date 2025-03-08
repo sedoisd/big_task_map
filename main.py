@@ -3,7 +3,7 @@ import sys
 from PyQt6.QtCore import Qt
 from PyQt6.QtGui import QPixmap
 
-from geocode import get_map, get_ll
+from geocode import get_map, get_ll, get_spn
 from io import BytesIO
 from PIL import Image
 
@@ -25,8 +25,11 @@ class MapMiniProgram(QMainWindow):
         # exe
         self._update_map()
         self.radio_light_theme.setChecked(True)
+        self.line_search.setPlaceholderText('Введите адрес для поиска')
 
         # bind
+        self.line_search.returnPressed.connect(self.address_search)
+        self.button_search.clicked.connect(self.address_search)
         self.radio_light_theme.toggled.connect(self.switch_theme)
         # self.radio_dark_theme.toggled.connect(self.switch_theme)
 
@@ -37,11 +40,27 @@ class MapMiniProgram(QMainWindow):
             self.theme = 'dark'
         self._update_map()
 
+    def address_search(self):
+        try:
+            self.toponym_to_find = self.line_search.text()
+            self.ll = list(get_ll(self.toponym_to_find))
+            self.spn = get_spn(self.toponym_to_find)
+            self._update_map()
+        except Exception:
+            self.line_search.setText('')
+            self.line_search.setPlaceholderText('Ничего не удалось найти')
+
+
+
     def keyPressEvent(self, event):
-        if event.key() == Qt.Key.Key_PageDown and self.spn < 60:
+        if event.key() == Qt.Key.Key_PageDown:
             self.spn *= 2
-        elif event.key() == Qt.Key.Key_PageUp and self.spn > 0.00025:
+            if self.spn > 60:
+                self.spn = 60
+        elif event.key() == Qt.Key.Key_PageUp:
             self.spn /= 2
+            if self.spn < 0.0005:
+                self.spn = 0.0005
         if event.key() == Qt.Key.Key_Up:
             self.ll[1] += self.spn / 2
         elif event.key() == Qt.Key.Key_Down:
@@ -50,6 +69,7 @@ class MapMiniProgram(QMainWindow):
             self.ll[0] -= self.spn / 2
         elif event.key() == Qt.Key.Key_Right:
             self.ll[0] += self.spn / 2
+
         if self.ll[0] > 180:
             self.ll[0] = -180 + (self.ll[0] - 180) + 1
         elif self.ll[0] < -180:
@@ -76,12 +96,12 @@ class MapMiniProgram(QMainWindow):
         # opened_image.show()
 
 
-# def except_hook(a, b, c):
-#     sys.__excepthook__(a, b, c)
+def except_hook(a, b, c):
+    sys.__excepthook__(a, b, c)
 
 
 if __name__ == '__main__':
-    # sys.__excepthook__ = except_hook
+    sys.__excepthook__ = except_hook
     app = QApplication(sys.argv)
     ex = MapMiniProgram()
     ex.show()

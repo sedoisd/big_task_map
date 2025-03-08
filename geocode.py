@@ -2,6 +2,9 @@ import requests
 import sys
 from apikeys import GEOCODER_API_KEY, GEOSEARCH_API_KEY, STATIC_API_KEY
 
+EXIT_PROGRAM_ON_ERROR = False
+PRINT_DEBUG = False
+
 geocoder_api_server = "http://geocode-maps.yandex.ru/1.x/"
 static_api_server = 'https://static-maps.yandex.ru/v1'
 search_api_server = "https://search-maps.yandex.ru/v1/"
@@ -9,12 +12,14 @@ search_api_server = "https://search-maps.yandex.ru/v1/"
 
 # log
 def request_error(response, url, exit=None):
-    print("Ошибка выполнения запроса:")
-    print('Сервер:', url)
-    print("Http статус:", response.status_code, "(", response.reason, ")")
-    print('url:', response.url)
-    print('Выход:', exit)
-    sys.exit(1)
+    if PRINT_DEBUG:
+        print("Ошибка выполнения запроса:")
+        print('Сервер:', url)
+        print("Http статус:", response.status_code, "(", response.reason, ")")
+        print('url:', response.url)
+        print('Выход:', exit)
+    if EXIT_PROGRAM_ON_ERROR:
+        sys.exit(1)
 
 
 # geocoder
@@ -44,9 +49,9 @@ def get_spn(toponym_to_find, mode=None):
     toponym = get_toponym(toponym_to_find)
     lower_corner = list(map(lambda x: float(x), toponym['boundedBy']['Envelope']['lowerCorner'].split()))
     upper_corner = list(map(lambda x: float(x), toponym['boundedBy']['Envelope']['upperCorner'].split()))
-    spn = list(map(lambda x, y: round(x - y, 4), upper_corner, lower_corner))
+    spn = min(list(map(lambda x, y: round(x - y, 4), upper_corner, lower_corner)))
     if mode == 'str':
-        return f'{spn[0]},{spn[1]}'
+        return f'{spn},{spn}'
     return spn
 
 
@@ -56,6 +61,7 @@ def get_map(params):
     response = requests.get(static_api_server, params=params)
     if not response:
         request_error(response, static_api_server, get_map)
+        print(response.url)
     return response
 
 
