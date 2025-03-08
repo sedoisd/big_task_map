@@ -31,6 +31,7 @@ class MapMiniProgram(QMainWindow):
         # bind
         self.line_search.returnPressed.connect(self.address_search)
         self.button_search.clicked.connect(self.address_search)
+        self.button_search_reset.clicked.connect(self.search_reset)
         self.radio_light_theme.toggled.connect(self.switch_theme)
         # self.radio_dark_theme.toggled.connect(self.switch_theme)
 
@@ -51,6 +52,13 @@ class MapMiniProgram(QMainWindow):
         except Exception:
             self.line_search.setText('')
             self.line_search.setPlaceholderText('Ничего не удалось найти')
+
+    def search_reset(self):
+        self.pt = ''
+        self.line_search.setText('')
+        self.line_search.setPlaceholderText('Введите адрес для поиска')
+        self._update_map()
+
 
     def keyPressEvent(self, event):
         if event.key() == Qt.Key.Key_PageDown:

@@ -116,6 +116,9 @@
        <height>23</height>
       </rect>
      </property>
+     <property name="focusPolicy">
+      <enum>Qt::NoFocus</enum>
+     </property>
      <property name="text">
       <string>Искать</string>
      </property>
@@ -134,6 +137,22 @@
      </property>
      <property name="styleSheet">
       <string notr="true">background: white</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="button_search_reset">
+     <property name="geometry">
+      <rect>
+       <x>90</x>
+       <y>100</y>
+       <width>101</width>
+       <height>23</height>
+      </rect>
+     </property>
+     <property name="focusPolicy">
+      <enum>Qt::NoFocus</enum>
+     </property>
+     <property name="text">
+      <string>Сброс поиска</string>
      </property>
     </widget>
    </widget>
