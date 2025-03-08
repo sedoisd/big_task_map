@@ -89,7 +89,6 @@ class MapMiniProgram(QMainWindow):
         resp = get_map(params_static)
         im = BytesIO(resp.content)
         # print(im) # io bytes object
-        # im.seek(0)
         opened_image = Image.open(im)
         opened_image.save('map.png')
         image = QPixmap('map.png')
