@@ -61,6 +61,12 @@ def get_address(toponym_to_find):
     return address
 
 
+def get_postal_code(toponym_to_find):
+    toponym = get_toponym(toponym_to_find)
+    postal_code = toponym["metaDataProperty"]["GeocoderMetaData"]['Address']['postal_code']
+    return postal_code
+
+
 # static
 def get_map(params):
     params['apikey'] = STATIC_API_KEY

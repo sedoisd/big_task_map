@@ -1,9 +1,10 @@
 import sys
+import traceback
 
 from PyQt6.QtCore import Qt
 from PyQt6.QtGui import QPixmap
 
-from geocode import get_map, get_ll, get_spn, get_address
+from geocode import get_map, get_ll, get_spn, get_address, get_postal_code
 from io import BytesIO
 from PIL import Image
 
@@ -22,10 +23,11 @@ class MapMiniProgram(QMainWindow):
         self.spn = 0.002
         self.theme = 'light'
         self.pt = ''
+        self.flag_display_postal_code = True
 
         # exe
         self._update_map()
-        self.radio_light_theme.setChecked(True)
+        # self.radio_light_theme.setChecked(True)
         self.line_search.setPlaceholderText('Введите адрес для поиска')
 
         # bind
@@ -34,6 +36,7 @@ class MapMiniProgram(QMainWindow):
         self.button_search_reset.clicked.connect(self.search_reset)
         self.radio_light_theme.toggled.connect(self.switch_theme)
         # self.radio_dark_theme.toggled.connect(self.switch_theme)
+        self.radio_postal_enabled.toggled.connect(self.switch_postal_code)
 
     def switch_theme(self):
         if self.radio_light_theme.isChecked():
@@ -49,11 +52,24 @@ class MapMiniProgram(QMainWindow):
             self.pt = f'{self.ll[0]},{self.ll[1]},pm2rdm'
             self.spn = get_spn(self.toponym_to_find)
             self._update_map()
-            self.label_address.setText(f'Адрес обьекта: {get_address(self.toponym_to_find)}')
+            self.search_address = get_address(self.toponym_to_find)
+            address = f'Адрес обьекта: {self.search_address}'
+            is_get_postal_code = self.try_get_postal_code()
+            if self.flag_display_postal_code and is_get_postal_code:
+                address += f', {self.search_postal_code}'
+            self.label_address.setText(address)
         except Exception:
+            # print(traceback.print_exc())
             self.line_search.setText('')
             self.line_search.setPlaceholderText('Ничего не удалось найти')
             self.label_address.setText('Адрес обьекта: -')
+
+    def try_get_postal_code(self):
+        try:
+            self.search_postal_code = get_postal_code(self.toponym_to_find)
+            return True
+        except Exception:
+            return False
 
     def search_reset(self):
         self.pt = ''
@@ -62,6 +78,8 @@ class MapMiniProgram(QMainWindow):
         self.label_address.setText('Адрес обьекта: -')
         self._update_map()
 
+    def switch_postal_code(self):
+        self.flag_display_postal_code = not self.flag_display_postal_code
 
     def keyPressEvent(self, event):
         if event.key() == Qt.Key.Key_PageDown:
