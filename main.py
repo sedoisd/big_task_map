@@ -21,6 +21,7 @@ class MapMiniProgram(QMainWindow):
         self.ll = list(get_ll(self.toponym_to_find))
         self.spn = 0.002
         self.theme = 'light'
+        self.pt = ''
 
         # exe
         self._update_map()
@@ -44,13 +45,12 @@ class MapMiniProgram(QMainWindow):
         try:
             self.toponym_to_find = self.line_search.text()
             self.ll = list(get_ll(self.toponym_to_find))
+            self.pt = f'{self.ll[0]},{self.ll[1]},pm2rdm'
             self.spn = get_spn(self.toponym_to_find)
             self._update_map()
         except Exception:
             self.line_search.setText('')
             self.line_search.setPlaceholderText('Ничего не удалось найти')
-
-
 
     def keyPressEvent(self, event):
         if event.key() == Qt.Key.Key_PageDown:
@@ -84,6 +84,7 @@ class MapMiniProgram(QMainWindow):
         params_static = {'ll': f'{self.ll[0]},{self.ll[1]}',
                          'spn': f'{self.spn},{self.spn}',
                          'theme': self.theme,
+                         'pt': self.pt,
                          'size': '600,450'}
         resp = get_map(params_static)
         im = BytesIO(resp.content)
@@ -96,12 +97,12 @@ class MapMiniProgram(QMainWindow):
         # opened_image.show()
 
 
-def except_hook(a, b, c):
-    sys.__excepthook__(a, b, c)
+# def except_hook(a, b, c):
+#     sys.__excepthook__(a, b, c)
 
 
 if __name__ == '__main__':
-    sys.__excepthook__ = except_hook
+    # sys.__excepthook__ = except_hook
     app = QApplication(sys.argv)
     ex = MapMiniProgram()
     ex.show()

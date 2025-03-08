@@ -3,7 +3,7 @@ import sys
 from apikeys import GEOCODER_API_KEY, GEOSEARCH_API_KEY, STATIC_API_KEY
 
 EXIT_PROGRAM_ON_ERROR = False
-PRINT_DEBUG = False
+PRINT_DEBUG = True
 
 geocoder_api_server = "http://geocode-maps.yandex.ru/1.x/"
 static_api_server = 'https://static-maps.yandex.ru/v1'
@@ -61,7 +61,6 @@ def get_map(params):
     response = requests.get(static_api_server, params=params)
     if not response:
         request_error(response, static_api_server, get_map)
-        print(response.url)
     return response
 
 
