@@ -92,16 +92,22 @@ class MapMiniProgram(QMainWindow):
             self.label_address.setText(address)
 
     def search_by_left_click_mouse(self, x, y):
-        pass
+        x_from_center = 310 - x
+        y_from_center = 230 - y
+        map_x = round(self.ll[0] - self.spn / 190 * x_from_center, 4) # 190
+        map_y = round(self.ll[1] + self.spn / 310 * y_from_center, 4) # 310
+        self.pt = f'{map_x},{map_y},pm2rdm'
+        self._update_map()
 
     def mousePressEvent(self, event):
         x, y = event.pos().x(), event.pos().y()
         print(f"Координаты:{x}, {y}")
-        if event.button() == Qt.MouseButton.LeftButton:
-            # print("Левая")
-            self.search_by_left_click_mouse(x, y)
-        elif event.button() == Qt.MouseButton.RightButton:
-            print("Правая")
+        if 10 <= x <= 610 and 10 <= y <= 460:
+            if event.button() == Qt.MouseButton.LeftButton:
+                # print("Левая")
+                self.search_by_left_click_mouse(x, y)
+            elif event.button() == Qt.MouseButton.RightButton:
+                print("Правая")
 
     def keyPressEvent(self, event):
         if event.key() == Qt.Key.Key_PageDown:
@@ -132,19 +138,24 @@ class MapMiniProgram(QMainWindow):
         self._update_map()
 
     def _update_map(self):
-        params_static = {'ll': f'{self.ll[0]},{self.ll[1]}',
-                         'spn': f'{self.spn},{self.spn}',
-                         'theme': self.theme,
-                         'pt': self.pt,
-                         'size': '600,450'}
-        resp = get_map(params_static)
-        im = BytesIO(resp.content)
-        # print(im) # io bytes object
-        opened_image = Image.open(im)
-        opened_image.save('map.png')
-        image = QPixmap('map.png')
-        self.image_label.setPixmap(image)
-        # opened_image.show()
+        try:
+            params_static = {'ll': f'{self.ll[0]},{self.ll[1]}',
+                             'spn': f'{self.spn},{self.spn}',
+                             'theme': self.theme,
+                             'pt': self.pt,
+                             'size': '600,450'}
+            resp = get_map(params_static)
+            im = BytesIO(resp.content)
+            # print(im) # io bytes object
+            opened_image = Image.open(im)
+            opened_image.save('map.png')
+            image = QPixmap('map.png')
+            self.image_label.setPixmap(image)
+            # opened_image.show()
+        except Exception:
+            print('Ошибка')
+            pass
+
 
 
 def except_hook(a, b, c):
