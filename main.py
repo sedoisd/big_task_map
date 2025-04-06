@@ -18,8 +18,8 @@ class MapMiniProgram(QMainWindow):
         uic.loadUi('ui_files/un.ui', self)
 
         # variable
-        self.toponym_to_find = 'Тольятти, ленинский проспект 20'
-        self.ll = list(get_ll(self.toponym_to_find))
+        self.object_to_find = 'Тольятти, ленинский проспект 20'
+        self.ll = list(get_ll(self.object_to_find))
         self.spn = 0.002
         self.theme = 'light'
         self.pt = ''
@@ -33,8 +33,8 @@ class MapMiniProgram(QMainWindow):
         self.line_search.setPlaceholderText('Введите адрес для поиска')
 
         # bind
-        self.line_search.returnPressed.connect(self.address_search)
-        self.button_search.clicked.connect(self.address_search)
+        self.line_search.returnPressed.connect(self.object_search_by_line)
+        self.button_search.clicked.connect(self.object_search_by_line)
         self.button_search_reset.clicked.connect(self.search_reset)
         self.radio_light_theme.toggled.connect(self.switch_theme)
         # self.radio_dark_theme.toggled.connect(self.switch_theme)
@@ -47,14 +47,18 @@ class MapMiniProgram(QMainWindow):
             self.theme = 'dark'
         self._update_map()
 
-    def address_search(self):
+    def object_search_by_line(self):
+        self.object_to_find = self.line_search.text()
+        self.object_search()
+
+    def object_search(self, flag_click=False):
         try:
-            self.toponym_to_find = self.line_search.text()
-            self.ll = list(get_ll(self.toponym_to_find))
-            self.pt = f'{self.ll[0]},{self.ll[1]},pm2rdm'
-            self.spn = get_spn(self.toponym_to_find)
-            self._update_map()
-            self.search_address = get_address(self.toponym_to_find)
+            self.ll = list(get_ll(self.object_to_find))
+            if not flag_click:
+                self.pt = f'{self.ll[0]},{self.ll[1]},pm2rdm'
+                self.spn = get_spn(self.object_to_find)
+                self._update_map()
+            self.search_address = get_address(self.object_to_find)
             address = f'Адрес обьекта: {self.search_address}'
             self.is_get_postal_code = self.try_get_postal_code()
             if self.flag_display_postal_code and self.is_get_postal_code:
@@ -67,9 +71,10 @@ class MapMiniProgram(QMainWindow):
             self.line_search.setPlaceholderText('Ничего не удалось найти')
             self.label_address.setText('Адрес обьекта: -')
 
+
     def try_get_postal_code(self):
         try:
-            self.search_postal_code = get_postal_code(self.toponym_to_find)
+            self.search_postal_code = get_postal_code(self.object_to_find)
             return True
         except Exception:
             return False
@@ -92,12 +97,15 @@ class MapMiniProgram(QMainWindow):
             self.label_address.setText(address)
 
     def search_by_left_click_mouse(self, x, y):
-        x_from_center = 310 - x
-        y_from_center = 230 - y
-        map_x = round(self.ll[0] - self.spn / 190 * x_from_center, 4) # 190
-        map_y = round(self.ll[1] + self.spn / 310 * y_from_center, 4) # 310
+        dx_from_center = 310 - x
+        dy_from_center = 230 - y
+        map_x = round(self.ll[0] - self.spn / 190 * dx_from_center, 4) # 190
+        map_y = round(self.ll[1] + self.spn / 310 * dy_from_center, 4) # 310
+        self.search_reset()
         self.pt = f'{map_x},{map_y},pm2rdm'
         self._update_map()
+        self.object_to_find = f'{self.ll[0]},{self.ll[1]}'
+        self.object_search(flag_click=True)
 
     def mousePressEvent(self, event):
         x, y = event.pos().x(), event.pos().y()
