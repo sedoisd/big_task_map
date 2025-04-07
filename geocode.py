@@ -77,9 +77,17 @@ def get_map(params):
 
 
 # geosearch
-def get_org(params):
-    params['apikey'] = GEOSEARCH_API_KEY
+def get_org(x, y):
+    address = get_address(f'{x},{y}')
+    params = {
+        "apikey": GEOSEARCH_API_KEY,
+        "text": address,
+        "lang": "ru_RU",
+        "ll": f'{x},{y}',
+        "type": "biz"
+    }
     response = requests.get(search_api_server, params=params)
     if not response:
         request_error(response, GEOSEARCH_API_KEY, get_org)
-    return response
+    resp = response.json()['features']
+    return resp[0] if resp else None

@@ -43,8 +43,7 @@
      <enum>Qt::WheelFocus</enum>
     </property>
     <property name="styleSheet">
-     <string notr="true">
-</string>
+     <string notr="true"/>
     </property>
     <property name="text">
      <string/>
@@ -164,7 +163,7 @@
        <x>10</x>
        <y>230</y>
        <width>171</width>
-       <height>101</height>
+       <height>91</height>
       </rect>
      </property>
      <property name="text">
@@ -218,6 +217,25 @@
        </layout>
       </item>
      </layout>
+    </widget>
+    <widget class="QLabel" name="label_organization">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>330</y>
+       <width>171</width>
+       <height>91</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Организация: -</string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+     </property>
+     <property name="wordWrap">
+      <bool>true</bool>
+     </property>
     </widget>
    </widget>
   </widget>

@@ -1,10 +1,11 @@
+import math
 import sys
 import traceback
 
 from PyQt6.QtCore import Qt
 from PyQt6.QtGui import QPixmap
 
-from geocode import get_map, get_ll, get_spn, get_address, get_postal_code
+from geocode import get_map, get_ll, get_spn, get_address, get_postal_code, get_org
 from io import BytesIO
 from PIL import Image
 
@@ -65,13 +66,12 @@ class MapMiniProgram(QMainWindow):
                 address += f', {self.search_postal_code}'
             self.label_address.setText(address)
             self.flag_search = True
-            print(address)
+            # print(address)
         except Exception:
             # print(traceback.print_exc())
             self.line_search.setText('')
             self.line_search.setPlaceholderText('Ничего не удалось найти')
             self.label_address.setText('Адрес обьекта: -')
-
 
     def try_get_postal_code(self):
         try:
@@ -85,6 +85,7 @@ class MapMiniProgram(QMainWindow):
         self.line_search.setText('')
         self.line_search.setPlaceholderText('Введите адрес для поиска')
         self.label_address.setText('Адрес обьекта: -')
+        self.label_organization.setText('Организация: -')
         self._update_map()
         self.flag_search = False
         self.is_get_postal_code = False
@@ -98,15 +99,28 @@ class MapMiniProgram(QMainWindow):
             self.label_address.setText(address)
 
     def search_by_left_click_mouse(self, x, y):
-        dx_from_center = 310 - x
-        dy_from_center = 230 - y
-        map_x = round(self.ll[0] - self.spn / 190 * dx_from_center, 7) # 190
-        map_y = round(self.ll[1] + self.spn / 310 * dy_from_center, 7) # 310
+        map_x, map_y = self._get_coords_with_offset(x, y)
         self.search_reset()
         self.pt = f'{map_x},{map_y},pm2rdm'
         self._update_map()
         self.object_to_find = f'{map_x},{map_y}'
         self.object_search(flag_click=True)
+
+    def search_by_right_click_mouse(self, x, y):
+        map_x, map_y = self._get_coords_with_offset(x, y)
+        organization = get_org(map_x, map_y)
+        # print(organization)
+        if organization:
+            org_x, org_y = organization['geometry']['coordinates']
+            self.search_reset()
+            if self._is_in_50_metrs((map_x, map_y), (org_x, org_y)):
+                self.pt = f'{org_x},{org_y},pm2rdm'
+                address = organization['properties']['CompanyMetaData']['address']
+                name = organization['properties']['name']
+                self.label_address.setText('Адрес обьекта: ' + address)
+                self.label_organization.setText('Организация: ' + name)
+                self._update_map()
+                self.object_to_find = f'{org_x},{org_y}'
 
     def mousePressEvent(self, event):
         x, y = event.pos().x(), event.pos().y()
@@ -116,7 +130,7 @@ class MapMiniProgram(QMainWindow):
                 # print("Левая")
                 self.search_by_left_click_mouse(x, y)
             elif event.button() == Qt.MouseButton.RightButton:
-                print("Правая")
+                self.search_by_right_click_mouse(x, y)
 
     def keyPressEvent(self, event):
         if event.key() == Qt.Key.Key_PageDown:
@@ -146,6 +160,13 @@ class MapMiniProgram(QMainWindow):
             self.ll[1] = -75
         self._update_map()
 
+    def _get_coords_with_offset(self, x, y):
+        dx_from_center = 310 - x
+        dy_from_center = 230 - y
+        map_x = round(self.ll[0] - self.spn / 190 * dx_from_center, 7)  # 190
+        map_y = round(self.ll[1] + self.spn / 310 * dy_from_center, 7)  # 310
+        return map_x, map_y
+
     def _update_map(self):
         try:
             params_static = {'ll': f'{self.ll[0]},{self.ll[1]}',
@@ -155,7 +176,6 @@ class MapMiniProgram(QMainWindow):
                              'size': '600,450'}
             resp = get_map(params_static)
             im = BytesIO(resp.content)
-            # print(im) # io bytes object
             opened_image = Image.open(im)
             opened_image.save('map.png')
             image = QPixmap('map.png')
@@ -165,6 +185,19 @@ class MapMiniProgram(QMainWindow):
             print('Ошибка')
             pass
 
+    def _is_in_50_metrs(self, a, b):
+        degree_to_meters_factor = 111 * 1000
+        a_lon, a_lat = a
+        b_lon, b_lat = b
+        radians_lattitude = math.radians((a_lat + b_lat) / 2.)
+        lat_lon_factor = math.cos(radians_lattitude)
+        dx = abs(a_lon - b_lon) * degree_to_meters_factor * lat_lon_factor
+        dy = abs(a_lat - b_lat) * degree_to_meters_factor
+        distance = int(math.sqrt(dx * dx + dy * dy))
+        # print(distance)
+        if distance > 50:
+            return False
+        return True
 
 
 def except_hook(a, b, c):
