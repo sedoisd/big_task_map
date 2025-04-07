@@ -53,8 +53,8 @@ class MapMiniProgram(QMainWindow):
 
     def object_search(self, flag_click=False):
         try:
-            self.ll = list(get_ll(self.object_to_find))
             if not flag_click:
+                self.ll = list(get_ll(self.object_to_find))
                 self.pt = f'{self.ll[0]},{self.ll[1]},pm2rdm'
                 self.spn = get_spn(self.object_to_find)
                 self._update_map()
@@ -65,6 +65,7 @@ class MapMiniProgram(QMainWindow):
                 address += f', {self.search_postal_code}'
             self.label_address.setText(address)
             self.flag_search = True
+            print(address)
         except Exception:
             # print(traceback.print_exc())
             self.line_search.setText('')
@@ -99,17 +100,17 @@ class MapMiniProgram(QMainWindow):
     def search_by_left_click_mouse(self, x, y):
         dx_from_center = 310 - x
         dy_from_center = 230 - y
-        map_x = round(self.ll[0] - self.spn / 190 * dx_from_center, 4) # 190
-        map_y = round(self.ll[1] + self.spn / 310 * dy_from_center, 4) # 310
+        map_x = round(self.ll[0] - self.spn / 190 * dx_from_center, 7) # 190
+        map_y = round(self.ll[1] + self.spn / 310 * dy_from_center, 7) # 310
         self.search_reset()
         self.pt = f'{map_x},{map_y},pm2rdm'
         self._update_map()
-        self.object_to_find = f'{self.ll[0]},{self.ll[1]}'
+        self.object_to_find = f'{map_x},{map_y}'
         self.object_search(flag_click=True)
 
     def mousePressEvent(self, event):
         x, y = event.pos().x(), event.pos().y()
-        print(f"Координаты:{x}, {y}")
+        # print(f"Координаты:{x}, {y}")
         if 10 <= x <= 610 and 10 <= y <= 460:
             if event.button() == Qt.MouseButton.LeftButton:
                 # print("Левая")
